@@ -1,5 +1,5 @@
 # sars2nterm
-Code Repository for SARS-CoV-2 N-terminomics data from Meyer et al. 2020. This repository contains all scripts and data files needed to process and reproduce the figures from the Meyer et al. bioRxiv preprint. 
+Code Repository for SARS-CoV-2 N-terminomics data from Meyer et al. 2020. This repository contains all scripts and data files needed to process and reproduce the figures from the [Meyer et al. bioRxiv preprint](https://www.biorxiv.org/content/10.1101/2020.09.16.297945v1). 
 
 Note: This code is intended to be released with the preprint, though please allow an extra day or so if it isn't up yet!
 
