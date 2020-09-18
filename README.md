@@ -15,6 +15,10 @@ These scripts take and process MaxQuant output files, as well as analysing and p
 - All scripts can be loaded from the Master script.
 - All scripts access a global variable 'path', which should be the folder you download this archive to, you will need to update path to the directory where you have saved this data.
 
+# Other files:
+- Minimal data files required for the analysis are in /data - for the full data see the PRIDE repositorys
+- 6x6p.cxv chimeraX command file is included to reproduce the structure visualisation in Figure 2. See /other.
+
 Code requires Matlab 2019b and the Statistics and Machine Learning toolbox. 
 
 Code: Ed Emmott (Github/Twitter: @edemmott, Email: e.emmott@liverpool.ac.uk), University of Liverpool, 2020.
