@@ -1,0 +1,13 @@
+open 6x6p
+set bg white
+turn x -90
+color /c grey
+color /b blue
+transparency /b 85 ribbons
+transparency /c 85 ribbons
+color /a:1-685 #63ACBE
+color /a:686-1273 #601A4A
+color /a:636-637 #EE442F
+save 6x6p.png width 500 height 500 supersample 10
+view /a:636-637 pad 0.5
+save 6x6pzoomed.png width 200 height 200 supersample 10
