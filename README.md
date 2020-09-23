@@ -14,7 +14,10 @@ These scripts take and process MaxQuant output files, as well as analysing and p
 # To use these scripts:
 - All scripts access a global variable 'path', which should be the folder you download this archive to, you will need to update path to the directory where you have saved this data.
 
-# Scripts
+# Scripts 
+Note: all scripts are self-contained. 
+- EnrichedCellularNterm_20200923.m - Analyses and produces the plots and tables for Figure 3, and Tables S4, S5
+- siRNA_Fig_20200923.m - Analyses and produces the plots for Figure 4
 - Inhibitors_20200923.m - Analyses/Fits inhibitor data and produces the plots for Figure 5, S5 and S6
 - ntermQC_20200923.m - This analyses the proteomics data and produces the plots for Figure S1.
 - SFig_SupViralNtermini_20200923.m - This analyses the proteomics data and produces the plots for Figure S2.
@@ -24,6 +27,7 @@ These scripts take and process MaxQuant output files, as well as analysing and p
 # Other files:
 - Minimal data files required for the analysis are in /data - for the full data see the PRIDE repositorys
 - The experimental design files necessary to reorder the TMT labels to account for label randomisation are in /data/ and are 'SARS2a549tmtlabelling_20200507.csv' and 'Verotmtlabelling_20200511.csv' respectively.
+- Protein annotations for A549 and Vero indicating signal and transit peptides for annotating N-termini results in /data/. human_acc_to_gn_signaltransit.csv and vero_acc_to_gn_signaltransit.csv respectively.
 - 6x6p.cxv chimeraX command file is included to reproduce the structure visualisation in Figure 2. See /other.
 - Custom .fasta file for SARS2 proteins, including those identified by Riboseq (Finkel et al. 2020). This is 'SARS2_Custom_20200518.fasta' and in /data/ 
 
