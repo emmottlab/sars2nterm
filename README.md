@@ -21,6 +21,7 @@ These scripts take and process MaxQuant output files, as well as analysing and p
 - Minimal data files required for the analysis are in /data - for the full data see the PRIDE repositorys
 - The experimental design files necessary to reorder the TMT labels to account for label randomisation are in /data/ and are 'SARS2a549tmtlabelling_20200507.csv' and 'Verotmtlabelling_20200511.csv' respectively.
 - 6x6p.cxv chimeraX command file is included to reproduce the structure visualisation in Figure 2. See /other.
+- Custom .fasta file for SARS2 proteins, including those identified by Riboseq (Finkel et al. 2020). This is 'SARS2_Custom_20200518.fasta' and in /data/ 
 
 Code requires Matlab 2019b and the Statistics and Machine Learning toolbox. 
 
