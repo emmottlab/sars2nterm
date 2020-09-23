@@ -7,10 +7,8 @@ path = '/Users/ed/Documents/GitHub/sars2nterm/data/';
 
 % Goal is SData tables, as well as 5 panels for Fig. 2.
 % - Panels 1-3 will show S, ORF3a and N
-% - Panels 4-5 will show the S cleavage site
-% - Panel 4 will show S cleavage site abundance in Vero/A549.
-% - Panel 5 will show this normalised to total S.
-
+% - Panels 4 will show the S cleavage site
+% - Panel 5 will show S cleavage site abundance in Vero/A549.
 
 % Load data
 dat = struct();
