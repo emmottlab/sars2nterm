@@ -17,6 +17,7 @@ These scripts take and process MaxQuant output files, as well as analysing and p
 # Scripts 
 Note: all scripts are self-contained. 
 
+- Fig_TimecoursePlots_20200923.m Analyses and produces the plots for Figure 1.
 - figure2_ViralNtermini_20200923.m Analyses and produces the plots and tables for Figure 2, and Tables S1, S2
 - EnrichedCellularNterm_20200923.m - Analyses and produces the plots and tables for Figure 3, and Tables S4, S5
 - siRNA_Fig_20200923.m - Analyses and produces the plots for Figure 4
@@ -25,9 +26,10 @@ Note: all scripts are self-contained.
 - SFig_SupViralNtermini_20200923.m - This analyses the proteomics data and produces the plots for Figure S2.
 - siRNA_cytotox_20200923.m - This plots cytotoxicity data for the siRNA experiment for Fig S3.
 - siRNA_KO_efficiency_20200923.m - This analyses qRT-PCR data to calculate knockown efficiency for the siRNA experiment, shown in Fig S4.
+- STable_AllViralPeptides20200923.m - This collates all the viral peptides identified accross the various experiments, generating table S3
 
 # Other files:
-- Minimal data files required for the analysis are in /data - for the full data see the PRIDE repositorys
+- Minimal data files required for the analysis are in /data/ to permit all the scripts to generate the data as seen in the preprint - for the full data see the PRIDE repositorys
 - The experimental design files necessary to reorder the TMT labels to account for label randomisation are in /data/ and are 'SARS2a549tmtlabelling_20200507.csv' and 'Verotmtlabelling_20200511.csv' respectively.
 - Protein annotations for A549 and Vero indicating signal and transit peptides for annotating N-termini results in /data/. human_acc_to_gn_signaltransit.csv and vero_acc_to_gn_signaltransit.csv respectively.
 - 6x6p.cxv chimeraX command file is included to reproduce the structure visualisation in Figure 2. See /other.
