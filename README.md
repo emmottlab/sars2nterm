@@ -26,6 +26,6 @@ These scripts take and process MaxQuant output files, as well as analysing and p
 - 6x6p.cxv chimeraX command file is included to reproduce the structure visualisation in Figure 2. See /other.
 - Custom .fasta file for SARS2 proteins, including those identified by Riboseq (Finkel et al. 2020). This is 'SARS2_Custom_20200518.fasta' and in /data/ 
 
-Code requires Matlab 2019b and the Statistics and Machine Learning toolbox. 
+Code requires Matlab 2019b and the Statistics and Machine Learning toolbox. Some of the functions e.g. tiledlayout were only introduced in R2019b, the scripts will work in earlier versions but will require some adjustment (e.g. tiledlayout -> subplot).
 
 Code: Ed Emmott (Github/Twitter: @edemmott, Email: e.emmott@liverpool.ac.uk), University of Liverpool, 2020.
