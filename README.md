@@ -15,6 +15,7 @@ These scripts take and process MaxQuant output files, as well as analysing and p
 - All scripts access a global variable 'path', which should be the folder you download this archive to, you will need to update path to the directory where you have saved this data.
 
 # Scripts
+- Inhibitors_20200923.m - Analyses/Fits inhibitor data and produces the plots for Figure 5, S5 and S6
 - ntermQC_20200923.m - This analyses the proteomics data and produces the plots for Figure S1.
 - SFig_SupViralNtermini_20200923.m - This analyses the proteomics data and produces the plots for Figure S2.
 - siRNA_cytotox_20200923.m - This plots cytotoxicity data for the siRNA experiment for Fig S3.
