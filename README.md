@@ -16,6 +16,8 @@ These scripts take and process MaxQuant output files, as well as analysing and p
 
 # Scripts 
 Note: all scripts are self-contained. 
+
+- figure2_ViralNtermini_20200923.m Analyses and produces the plots and tables for Figure 2, and Tables S1, S2
 - EnrichedCellularNterm_20200923.m - Analyses and produces the plots and tables for Figure 3, and Tables S4, S5
 - siRNA_Fig_20200923.m - Analyses and produces the plots for Figure 4
 - Inhibitors_20200923.m - Analyses/Fits inhibitor data and produces the plots for Figure 5, S5 and S6
