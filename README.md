@@ -18,6 +18,7 @@ These scripts take and process MaxQuant output files, as well as analysing and p
 - ntermQC_20200923.m - This analyses the proteomics data and produces the plots for Figure S1.
 - SFig_SupViralNtermini_20200923.m - This analyses the proteomics data and produces the plots for Figure S2.
 - siRNA_cytotox_20200923.m - This plots cytotoxicity data for the siRNA experiment for Fig S3.
+- siRNA_KO_efficiency_20200923.m - This analyses qRT-PCR data to calculate knockown efficiency for the siRNA experiment, shown in Fig S4.
 
 # Other files:
 - Minimal data files required for the analysis are in /data - for the full data see the PRIDE repositorys
