@@ -12,11 +12,14 @@ We studied proteolysis in the context of SARS-CoV-2 infection of ACE2-A549 and V
 These scripts take and process MaxQuant output files, as well as analysing and plotting qRT-PCR Ct values, and cell viability and inhibitor data. Only the minimal proteomic data files are provided here that are required for these scripts. The full MaxQuant output files are available through the PRIDE repository (PXD021145, PXD021152, PXD021153, PXD021154, PXD021402 & PXD021403 - pre-dataset release, reviewer usenames and passwords are available to access this data in the preprint).
 
 # To use these scripts:
-- All scripts can be loaded from the Master script.
 - All scripts access a global variable 'path', which should be the folder you download this archive to, you will need to update path to the directory where you have saved this data.
+
+# Scripts
+- ntermQC.m - This analyses the proteomics data and produces the plots for Figure S1.
 
 # Other files:
 - Minimal data files required for the analysis are in /data - for the full data see the PRIDE repositorys
+- The experimental design files necessary to reorder the TMT labels to account for label randomisation are in /data/ and are 'SARS2a549tmtlabelling_20200507.csv' and 'Verotmtlabelling_20200511.csv' respectively.
 - 6x6p.cxv chimeraX command file is included to reproduce the structure visualisation in Figure 2. See /other.
 
 Code requires Matlab 2019b and the Statistics and Machine Learning toolbox. 
