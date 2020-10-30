@@ -1,7 +1,7 @@
 # sars2nterm
 Code Repository for SARS-CoV-2 N-terminomics data from Meyer et al. 2020. This repository contains all scripts and data files needed to process and reproduce the figures from the [Meyer et al. bioRxiv preprint](https://www.biorxiv.org/content/10.1101/2020.09.16.297945v1). 
 
-Note: This code is intended to be released with the preprint, though please allow an extra day or so if it isn't up yet!
+This repository contains the latest version of the code, if you need to access specific versions associated with the different preprint releases, please use the relevent release.
 
 # Abstract:
 Many events in viral infection are regulated through post-translational modification. In the case of positive-sense RNA viruses such as SARS-CoV-2 which encodes two viral proteases, proteolytic cleavage of both viral and cellular proteins is crucial for productive viral infection. Through this work we identified multiple viral proteins cleaved during the infection timecourse, including crucial antigens such as Spike and N, as well as cellular proteins which are cleaved at positions matching the consensus sequences for cleavage by the viral proteases. We further showed that siRNA inhibition and inhibitor treatment targeting these cellular proteins inhibited viral replication and the production of infectious virus, suggesting avenues for treatments for COVID-19 disease.
