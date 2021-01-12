@@ -238,10 +238,10 @@ end
 % PCA plots
 % enriched
 [dat.pca.A549,~,~,~,dat.pcaV.A549,~] = pca(log2(dat.mat.A549(dat.varIa.A549 , :)))
-[dat.pca.Vero,~,~,~,dat.pcaV.Vero,~] = pca(log2(dat.mat.A549(dat.varIa.Vero , :)))
+[dat.pca.Vero,~,~,~,dat.pcaV.Vero,~] = pca(log2(dat.mat.Vero(dat.varIa.Vero , :)))
 % unenriched
 [dat.upca.A549,~,~,~,dat.upcaV.A549,~] = pca(log2(dat.umat.A549(dat.uvarIa.A549 , :)))
-[dat.upca.Vero,~,~,~,dat.upcaV.Vero,~] = pca(log2(dat.umat.A549(dat.uvarIa.Vero , :)))
+[dat.upca.Vero,~,~,~,dat.upcaV.Vero,~] = pca(log2(dat.umat.Vero(dat.uvarIa.Vero , :)))
 
 grpVar = categorical({'0M','0','0','0','6','6','6','12','12','12','24','24','24','24M','24M','24M'});
 
