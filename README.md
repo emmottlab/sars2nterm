@@ -19,14 +19,16 @@ Note: all scripts are self-contained.
 
 - Fig_TimecoursePlots_20200923.m Analyses and produces the plots for Figure 1.
 - figure2_ViralNtermini_20200923.m Analyses and produces the plots and tables for Figure 2, and Tables S1, S2
-- EnrichedCellularNterm_20200923.m - Analyses and produces the plots and tables for Figure 3, and Tables S4, S5
-- siRNA_Fig_20200923.m - Analyses and produces the plots for Figure 4
-- Inhibitors_20200923.m - Analyses/Fits inhibitor data and produces the plots for Figure 5, S5 and S6
+- EnrichedCellularNterm_20200923.m - Analyses and produces the plots and tables for Figure 4, and Tables S4, S5
+- siRNA_Fig_20200923.m - Analyses and produces the plots for Figure 5
+- Inhibitors_20200923.m - Analyses/Fits inhibitor data and produces the plots for Figure 6, S7 and S8
 - ntermQC_20200923.m - This analyses the proteomics data and produces the plots for Figure S1.
 - SFig_SupViralNtermini_20200923.m - This analyses the proteomics data and produces the plots for Figure S2.
-- siRNA_cytotox_20200923.m - This plots cytotoxicity data for the siRNA experiment for Fig S3.
-- siRNA_KO_efficiency_20200923.m - This analyses qRT-PCR data to calculate knockown efficiency for the siRNA experiment, shown in Fig S4.
+- siRNA_cytotox_20200923.m - This plots cytotoxicity data for the siRNA experiment for Fig S5.
+- siRNA_KO_efficiency_20200923.m - This analyses qRT-PCR data to calculate knockown efficiency for the siRNA experiment, shown in Fig S6.
 - STable_AllViralPeptides20200923.m - This collates all the viral peptides identified accross the various experiments, generating table S3
+- ntermQC_ProteaseInhibitor.m - Analyses and produces the plots for Figure S3 (Protease inhibitor HUNTER experiment).
+-ProteaseInhibitorHunter.m - Analyses and produces the plots for Figure 3 and S3 (Protease inhibitor HUNTER experiment).
 
 # Other files:
 - Minimal data files required for the analysis are in /data/ to permit all the scripts to generate the data as seen in the preprint - for the full data see the PRIDE repositorys
