@@ -14,12 +14,12 @@ These scripts take and process MaxQuant output files, as well as analysing and p
 # To use these scripts:
 - All scripts access a global variable 'path', which should be the folder you download this archive to, you will need to update path to the directory where you have saved this data.
 
-# Scripts 
-Note: all scripts are self-contained. 
+# Matlab scripts 
+Note: all scripts are self-contained with the exception of EnrichedCellularNterm_20200923.m which calls a python script. 
 
 - Fig_TimecoursePlots_20200923.m Analyses and produces the plots for Figure 1.
 - figure2_ViralNtermini_20200923.m Analyses and produces the plots and tables for Figure 2, and Tables S1, S2
-- EnrichedCellularNterm_20200923.m - Analyses and produces the plots and tables for Figure 4, and Tables S4, S5
+- EnrichedCellularNterm_20200923.m - Analyses and produces the plots and tables for Figure 4, and Tables S4, S5. Also includes HIquant inference - for this portion of the script to function, Matlab MUST be started from the command line. This also requires a working Python installation and HIquant installing. The modified HIquant script which takes command line input is available at github.com/emmottlab/hiquant/
 - siRNA_Fig_20200923.m - Analyses and produces the plots for Figure 5
 - Inhibitors_20200923.m - Analyses/Fits inhibitor data and produces the plots for Figure 6, S7 and S8
 - ntermQC_20200923.m - This analyses the proteomics data and produces the plots for Figure S1.
@@ -39,4 +39,6 @@ Note: all scripts are self-contained.
 
 Code requires Matlab 2019b and the Statistics and Machine Learning toolbox. Some of the functions e.g. tiledlayout were only introduced in R2019b, the scripts will work in earlier versions but will require some adjustment (e.g. tiledlayout -> subplot).
 
-Code: Ed Emmott (Github/Twitter: @edemmott, Email: e.emmott@liverpool.ac.uk), University of Liverpool, 2020.
+Code: 
+- Matlab: Ed Emmott (Github/Twitter: @edemmott, Email: e.emmott@liverpool.ac.uk), University of Liverpool, 2020.
+- R: Artuas Grauslys, University of Liverpool, 2021.
