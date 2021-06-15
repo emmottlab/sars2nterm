@@ -197,28 +197,73 @@ tc_r_A = readmatrix([path , 'BjornData/TC_A549_SupRNA.csv'])';
 tc_p_V = readmatrix([path , 'BjornData/TC_Vero_Plaque.csv'])';
 tc_p_A = readmatrix([path , 'BjornData/TC_A549_Plaque.csv'])';
 
+%% Generate text annotations for volcano plots (so only significant/viral hits)
+dat.pep.A549.GN = dat.pep.A549.LeadingRazorProtein;
+dat.pep.Vero.GN = dat.pep.Vero.LeadingRazorProtein;
+
+% Identify SARS2 proteins
+dat.S2.A549 = contains(dat.pep.A549.LeadingRazorProtein,'SARS2');
+dat.S2.Vero = contains(dat.pep.Vero.LeadingRazorProtein,'SARS2');
+
+% Shorten SARS2 proteins
+dat.pep.A549.GN(dat.S2.A549) = extractAfter(dat.pep.A549.GN(dat.S2.A549),'|');
+dat.pep.Vero.GN(dat.S2.Vero) = extractAfter(dat.pep.Vero.GN(dat.S2.Vero),'|');
+
+dat.pep.A549.GN(dat.S2.A549) = extractBefore(dat.pep.A549.GN(dat.S2.A549),'|');
+dat.pep.Vero.GN(dat.S2.Vero) = extractBefore(dat.pep.Vero.GN(dat.S2.Vero),'|');
+
+% Now: Vero fastas need annotating from file: Gene names are contained
+% within the string for A549
+dat.pep.A549.GN(~dat.S2.A549) = extractAfter(dat.pep.A549.GN(~dat.S2.A549),'|');
+dat.pep.A549.GN(~dat.S2.A549) = extractAfter(dat.pep.A549.GN(~dat.S2.A549),'|');
+dat.pep.A549.GN(~dat.S2.A549) = extractBefore(dat.pep.A549.GN(~dat.S2.A549),'_');
+
+%% Match Vero to GN
+dat.pep.Vero.GN(~dat.S2.Vero) = extractAfter(dat.pep.Vero.GN(~dat.S2.Vero),'|');
+dat.pep.Vero.GN(~dat.S2.Vero) = extractBefore(dat.pep.Vero.GN(~dat.S2.Vero),'|');
+
+% Import Vero annotations
+dat.VeroGN = readtable([path , 'vero_acc_to_gn_signaltransit.csv']);
+
+% Match up accessions
+[lia locb] = ismember(dat.pep.Vero.GN , dat.VeroGN.Entry);
+
+% Replace accessions with Gene Names
+dat.pep.Vero.GN(lia) = dat.VeroGN.GeneNames(locb(lia));
+
+% Note PUR6 = PAICS, so replacing this manually for consistency throughout
+% the manuscript
+dat.pep.A549.GN{contains(dat.pep.A549.GN,'PUR6')} = 'PAICS'; 
+
 %% Plot all data
 
 figure
-subplot(2,4,4)
+subplot(2,6,7:9) % Row 2, 1:2 (2,4,4)
 scatter(log2(dat.mean.A549(~dat.hits.A549)) , -log10(dat.q2.A549(~dat.hits.A549)),'filled','k','MarkerFaceAlpha',0.2)
 ylim([0 -pmax])
 xlabel('Mean Log_2 fold-change (Infected over Mock)');
 ylabel('-Log_1_0 Q-value');
 hold on
-scatter(log2(dat.mean.A549(dat.hits.A549)) , -log10(dat.q2.A549(dat.hits.A549)),'filled','r','MarkerFaceAlpha',0.4)
+% Testing in progress
+scatter(log2(dat.mean.A549(dat.hits.A549 + dat.viral.A549 == 1)) , -log10(dat.q2.A549(dat.hits.A549 + dat.viral.A549 == 1)),'filled','r','MarkerFaceAlpha',0.4)
+
 scatter(log2(dat.mean.A549(dat.viral.A549)) , -log10(dat.q2.A549(dat.viral.A549)),'filled','b','MarkerFaceAlpha',0.4)
+
+%
+
 line([-fccut -fccut],[0 -pmax],'Color','k','LineStyle','--')
 line([fccut fccut],[0 -pmax],'Color','k','LineStyle','--')
 line([-xcut xcut],[-log10(qcut) -log10(qcut)],'Color','k','LineStyle','--')
+text(log2(dat.mean.A549(dat.viral.A549)) , -log10(dat.q2.A549(dat.viral.A549)),dat.pep.A549.GN(dat.viral.A549),'FontSize',10);
+text(log2(dat.mean.A549(log2(dat.mean.A549) >= 2)) , -log10(dat.q2.A549(log2(dat.mean.A549) >= 2)),dat.pep.A549.GN(log2(dat.mean.A549) >= 2),'FontSize',10);
 %set(gca,'Fontsize',14)
 legend('N-termini','Cellular','Viral','location','northwest')
 legend('boxoff')
 title('neo-N-termini: A549-Ace2')
 set(gca,'Fontsize',14)
 hold off
-
-subplot(2,4,5)
+xlim([-3,6])
+subplot(2,6,1:2) % Row 1: 1 (2,4,5)
 % Uncomment section to see individual datapoints
 % for ii = 1:3
 %     scatter(timecourseTimes , tc_r_A(ii,:),'MarkerFaceColor', 'k'); 
@@ -248,7 +293,7 @@ ylim([1e1,1e7])
 set(gca,'Fontsize',14)
 hold off
 
-subplot(2,4,6)
+subplot(2,6,3:4) % Row 1, 2 (2,4,6)
 errorbar(timecourseTimesP, mean(datP.Rs.A549,2),std(datP.Rs.A549'),'-ok','LineWidth',1,'MarkerFaceColor','k');
 hold on
 errorbar(timecourseTimesP, mean(datP.Rs.Vero,2),std(datP.Rs.Vero'),'-or','LineWidth',1,'MarkerFaceColor','r');
@@ -269,7 +314,7 @@ ylim([20,36])
 set(gca,'Fontsize',14)
 hold off
 
-subplot(2,4,7)
+subplot(2,6,5:6) % Row 1: 3 (2,4,7)
 % Uncomment section to see individual datapoints
 % for ii = 1:3
 %     scatter(timecourseTimes , tc_p_A(ii,:),'MarkerFaceColor', 'k'); 
@@ -287,7 +332,7 @@ errorbar(timecourseTimes, mean(tc_p_V),std(tc_p_V),'-or','LineWidth',1,'MarkerFa
 
 title('Viral Titres')
 xlabel('Hours post-infection')
-ylabel('Plaque-Forming Units/mL')
+ylabel('PFU/mL')
 legend({'A549-Ace2','Vero E6'},'Location','southeast')
 legend('boxoff')
 xticks(tcTicks)
@@ -299,22 +344,29 @@ set(gca,'Fontsize',14)
 hold off
 % Add Vero and A549 as colored text
 
-subplot(2,4,8)
+subplot(2,6,10:12) % Row 2: 3:4 (2,4,8)
 scatter(log2(dat.mean.Vero(~dat.hits.Vero)) , -log10(dat.q2.Vero(~dat.hits.Vero)),'filled','k','MarkerFaceAlpha',0.2)
 ylim([0 -pmax])
 xlabel('Mean Log_2 fold-change (Infected over Mock)');
 ylabel('-Log_1_0 Q-value');
 hold on
-scatter(log2(dat.mean.Vero(dat.hits.Vero)) , -log10(dat.q2.Vero(dat.hits.Vero)),'filled','r','MarkerFaceAlpha',0.4)
+scatter(log2(dat.mean.Vero(dat.hits.Vero + dat.viral.Vero == 1)) , -log10(dat.q2.Vero(dat.hits.Vero + dat.viral.Vero == 1)),'filled','r','MarkerFaceAlpha',0.4)
+
 scatter(log2(dat.mean.Vero(dat.viral.Vero)) , -log10(dat.q2.Vero(dat.viral.Vero)),'filled','b','MarkerFaceAlpha',0.4)
+
 line([-fccut -fccut],[0 -pmax],'Color','k','LineStyle','--')
 line([fccut fccut],[0 -pmax],'Color','k','LineStyle','--')
 line([-xcut xcut],[-log10(qcut) -log10(qcut)],'Color','k','LineStyle','--')
+text(log2(dat.mean.Vero(dat.viral.Vero)) , -log10(dat.q2.Vero(dat.viral.Vero)),dat.pep.Vero.GN(dat.viral.Vero),'FontSize',10);
+
+text(log2(dat.mean.Vero(log2(dat.mean.Vero) >= 2)) , -log10(dat.q2.Vero(log2(dat.mean.Vero) >= 2)),dat.pep.Vero.GN(log2(dat.mean.Vero) >= 2),'FontSize',10);
 set(gca,'Fontsize',14)
 legend('N-termini','Cellular','Viral','location','northwest')
 legend('boxoff')
 title('neo-N-termini: Vero E6')
+xlim([-3,6])
 hold off
+
 
 % Save figure
 print([path , '/Figures/Fig_Timecourse.pdf'],'-dpdf');

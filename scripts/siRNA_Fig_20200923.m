@@ -53,6 +53,7 @@ scatter(x(:),log10(rnaMat(:)),'filled','k','MarkerFaceAlpha',0.3','jitter','on',
 text(11,1.75,'p \leq 0.01 vs. Ctrl','Color','b','FontSize',14);
 text(11,1.25,'p > 0.01 vs. Ctrl','Color','r','FontSize',14);
 ylabel({'Log_1_0 RNA copies'; 'PFU equivalent/mL'})
+ylim([0,7])
 hold off
 set(gca,'FontSize',14);
 
@@ -69,11 +70,11 @@ scatter(x2(:),log10(pfuMat(:)),'filled','k','MarkerFaceAlpha',0.3','jitter','on'
 text(11,5.5,'p \leq 0.01 vs. Ctrl','Color','b','FontSize',14);
 text(11,5,'p > 0.01 vs. Ctrl','Color','r','FontSize',14);
 text(11,4.5,'...Limit of detection','Color','k','FontSize',14)
-ylabel({'Log_1_0 Plaque-Forming'; 'Units/mL'})
+ylabel({'Log_1_0 PFU/mL'})
 xlabel('siRNA')
 set(gca,'FontSize',14);
 line([0 15],[log10(40),log10(40)],'Color','k','LineStyle',':')
-
+ylim([1,6])
 % Save figure
 print([path , '/Figures/Fig_siRNA.pdf'],'-dpdf');
 

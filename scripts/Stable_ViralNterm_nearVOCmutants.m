@@ -11,6 +11,7 @@
 % B.1.526   aka 20C/S.484K
 % B.1.525   aka 20A/S.484K
 
+
 clear
 clc
 
@@ -18,12 +19,15 @@ clc
 % Import stain/mutation table generated data available from CoVariants.org
 dat = struct()
 
-dat.variants = readtable('/Users/ed/Documents/GitHub/sars2nterm/data/covariants_20210315.csv');
+%dat.variants =
+%readtable('/Users/ed/Documents/GitHub/sars2nterm/data/covariants_20210315.csv');
+% Older list, depreciated.
+dat.variants = readtable('/Users/ed/Documents/GitHub/sars2nterm/data/covariants_20210524.csv');
 
 % Import viral cleavage data from tables S3/4.
 dat.a549 = readtable('/Users/ed/Documents/GitHub/sars2nterm/data/Tables/viralNeoN-termini_A549.csv');
 dat.vero = readtable('/Users/ed/Documents/GitHub/sars2nterm/data/Tables/viralNeoN-termini_VeroE6.csv');
-
+dat.total = readtable('/Users/ed/Documents/GitHub/sars2nterm/data/Tables/ViralPeptides.csv');
 %% Reannotate protein identification in dat.a549/vero to match that in dat.variants.
 
 % Note that complete reannotation is unnecessary as only a subset of viral
@@ -66,9 +70,27 @@ dat.vero.varProt(contains(dat.vero.LeadingRazorProtein , 'SARS2|pp1ab|Replicase'
 dat.vero.varProt(dat.vero.StartPosition >= 4393) = {'ORF1b'};
 dat.vero.StartPosition(dat.vero.StartPosition >= 4393) = dat.vero.StartPosition(dat.vero.StartPosition >= 4393) - 4392;
 
+% Now do for total
+dat.total.varStartPos = dat.total.StartPosition;
+
+dat.total.varProt(contains(dat.total.Proteins , 'SARS2|N|Nucleoprotein')) = {'N'};
+dat.total.varProt(contains(dat.total.Proteins , 'SARS2|S|Spike')) = {'S'};
+dat.total.varProt(contains(dat.total.Proteins , 'SARS2|ORF3A|ORF')) = {'ORF3a'};
+dat.total.varProt(contains(dat.total.Proteins , 'SARS2|ORF8|ORF')) = {'ORF8'};
+
+% If is pp1ab & is >= 4393 start position: is pp1b. if <4393 is pp1a.
+dat.total.varProt(contains(dat.vero.Proteins , 'SARS2|pp1ab|Replicase')) = {'ORF1a'};
+
+% The SARS2 proteins longer than 4393 are pp1b.
+dat.total.varProt(dat.total.StartPosition >= 4393) = {'ORF1b'};
+dat.total.StartPosition(dat.total.StartPosition >= 4393) = dat.total.StartPosition(dat.total.StartPosition >= 4393) - 4392;
+
+%%
+
 % Now complete the remaining proteins so that matlab plays nice
 dat.a549.varProt(find(cellfun(@isempty,dat.a549.varProt))) = {'_'};
 dat.vero.varProt(find(cellfun(@isempty,dat.vero.varProt))) = {'_'};
+dat.total.varProt(find(cellfun(@isempty,dat.total.varProt))) = {'_'};
 
 %% Now match cleavage sites with variants data and identify how far each cleavage site is from its closest variant
 % Concept: 
@@ -129,8 +151,91 @@ end
 % This is complete and ready for export as S. Table
 writetable(dat.variants,'/Users/ed/Documents/GitHub/sars2nterm/data/Tables/Stable_NtermNearVOCmutations.csv');
 
+%% So really want a reverse of the previous 
+
+% Sort on proteins included in variant mutations
+logNVOC = ismember(dat.total.varProt,'_');
+dat.totalS = dat.total(~logNVOC,:);
+
+% Loop through all entries in total
+for ii = 1:numel(dat.totalS.Sequence)
+      [lia, locb] = ismember(dat.variants.Protein, dat.totalS.varProt(ii));
+ 
+      if sum(lia) >= 1
+            posVar = dat.totalS.StartPosition(ii);
+            NtermPos = dat.variants.Position_AA(lia);
+            
+          [~, minA] = min(abs(NtermPos-posVar));
+         dat.totalS.closestNterm(ii) = NtermPos(minA);
+         
+         dat.totalS.distFromClosest(ii) = abs(dat.totalS.varStartPos(ii) - dat.totalS.closestNterm(ii));
+       clear posVar NtermPos minA           
+      end
+      
+end
+
+
+%%
+
+% Remove duplicates
+[c, ia, ic] = unique(dat.totalS.Sequence);
+dat.totalS = dat.totalS(ia,:);
+
+% Now sort and do stats
+[~ , Idx] = sort(dat.totalS.distFromClosest , 'ascend');
+
+dat.totalS = dat.totalS(Idx,:);
+
+% Indicate enriched
+logEnr = contains(dat.totalS.RawFile , 'Enriched');
+
+% Now do KS test
+num = 1:numel(logEnr);
+%%
+figure
+scatter(num(~logEnr),log10(dat.totalS.distFromClosest(~logEnr)),'filled','k');
+hold on
+scatter(num(logEnr),log10(dat.totalS.distFromClosest(logEnr)),'filled','r');
+xlabel('Peptides ranked by distance from VOC mutation');
+ylabel('Log_1_0 amino acid distance from VOC mutation');
+legend({'Viral Peptides','Viral neo-N-termini'},'Location','northwest')
+title('neo-N-terminus proximity to VOC mutations')
+
+
+[h,p,k] = kstest2(num(logEnr),num);
+text(40,0.5,['KS test: p =',num2str(p)],'FontSize',14);
+
+set(gca,'FontSize',14);
+
+%%
 % Subset most interesting
 temp = dat.variants.within_5_AA_A549 + dat.variants.within_5_AA_Vero >= 1;
 dat.subsvariants = dat.variants(temp,:);
 
+temp = dat.variants.within_10_AA_A549 + dat.variants.within_10_AA_Vero >= 1;
+dat.subsvariants2 = dat.variants(temp,:);
 
+% Remove redundancy
+for ii = 1:numel(dat.subsvariants.Protein)
+    dat.subsvariants.ProtPos{ii} = [dat.subsvariants.Protein{ii},'_', num2str(dat.subsvariants.Position_AA(ii))];
+end
+size(unique(dat.subsvariants.ProtPos),1) % How many unique sites make cutoff
+
+for ii = 1:numel(dat.subsvariants2.Protein)
+    dat.subsvariants2.ProtPos{ii} = [dat.subsvariants2.Protein{ii},'_', num2str(dat.subsvariants2.Position_AA(ii))];
+end
+size(unique(dat.subsvariants2.ProtPos),1) % How many unique sites make cutoff
+
+% Number of VOC/VOIs 
+categories(categorical(dat.variants.Strain))
+
+% Total sites/mutations
+for ii = 1:numel(dat.variants.Protein)
+   dat.variants.ProtMut{ii} = [dat.variants.Protein{ii},'_',dat.variants.Mutation{ii}]; 
+end
+
+size(unique(dat.variants.ProtMut),1)
+
+%%  Write tables with the subset closest
+writetable(dat.subsvariants, '/Users/ed/Documents/GitHub/sars2nterm/data/Tables/VOC_neoNterm_within5aa.csv');
+writetable(dat.subsvariants2,'/Users/ed/Documents/GitHub/sars2nterm/data/Tables/VOC_neoNterm_within10aa.csv');

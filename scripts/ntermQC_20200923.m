@@ -253,6 +253,8 @@ hgA = gscatter(dat.pca.A549(:,pcA) , dat.pca.A549(:,pcB) , grpVar);
 xlabel(['PC ',num2str(pcA),' (',num2str(round(dat.pcaV.A549(pcA))),'%)']);
 ylabel(['PC ',num2str(pcB),' (',num2str(round(dat.pcaV.A549(pcB))),'%)']);
 title('A549-Ace2 - Enriched')
+h6 = hgA(6)
+h6.Color = 'k';
 
 subplot(1,4,2) % PCA on Vero, enriched data
 pcA = 1;
@@ -261,6 +263,8 @@ hgB = gscatter(dat.pca.Vero(:,pcA) , dat.pca.Vero(:,pcB) , grpVar);
 xlabel(['PC ',num2str(pcA),' (',num2str(round(dat.pcaV.Vero(pcA))),'%)']);
 ylabel(['PC ',num2str(pcB),' (',num2str(round(dat.pcaV.Vero(pcB))),'%)']);
 title('Vero E6 - Enriched')
+h6 = hgB(6)
+h6.Color = 'k';
 
 subplot(1,4,3) % PCA on A549, unenriched data
 pcA = 3; % Note: PCA 3 in this specific case gave better separation than PCA 1.
@@ -269,6 +273,8 @@ hgC = gscatter(dat.upca.A549(:,pcA) , dat.upca.A549(:,pcB) , grpVar);
 xlabel(['PC ',num2str(pcA),' (',num2str(round(dat.upcaV.A549(pcA))),'%)']);
 ylabel(['PC ',num2str(pcB),' (',num2str(round(dat.upcaV.A549(pcB))),'%)']);
 title('A549-Ace2 - Unenriched')
+h6 = hgC(6)
+h6.Color = 'k';
 
 subplot(1,4,4) % PCA on Vero, unenriched data
 pcA = 1;
@@ -277,6 +283,8 @@ hgD = gscatter(dat.upca.Vero(:,pcA) , dat.upca.Vero(:,pcB) , grpVar);
 xlabel(['PC ',num2str(pcA),' (',num2str(round(dat.upcaV.Vero(pcA))),'%)']);
 ylabel(['PC ',num2str(pcB),' (',num2str(round(dat.upcaV.Vero(pcB))),'%)']);
 title('Vero E6 - Unenriched')
+h6 = hgD(6)
+h6.Color = 'k';
 
 % Save figure
 print([path , '/Figures/PCA.pdf'],'-dpdf');

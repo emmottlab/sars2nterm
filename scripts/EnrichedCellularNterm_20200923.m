@@ -379,7 +379,7 @@ end
 figure
 t = tiledlayout(2,1)
 nexttile
-imagesc(log2(dat.heatmap.A549(dat.vI.A549,:))); colormap( redblue( 64 ) ); %rb;
+imagesc(log2(dat.heatmap.A549(dat.vI.A549,:))); colormap( redbluecmap( 64 ) ); %rb;
 c = colorbar('Ticks',[-2 , -1 , 0 , 1 , 2],'TickLabels',{'\leq-2','-1','0','1','\geq2'})
 c.Label.String = 'Log_2 fold-change';
 caxis([-2 2])
@@ -389,7 +389,7 @@ xticks([])
 title('A549-Ace2 cellular neo-N-termini')
 
 nexttile
-imagesc(log2(dat.heatmap.Vero(dat.vI.Vero,:))); colormap( redblue( 64 ) );%rb;
+imagesc(log2(dat.heatmap.Vero(dat.vI.Vero,:))); colormap( redbluecmap( 64 ) );%rb;
 c = colorbar('Ticks',[-2 , -1 , 0 , 1 , 2],'TickLabels',{'\leq-2','-1','0','1','\geq2'})
 c.Label.String = 'Log_2 fold-change';
 caxis([-2 2])
@@ -439,18 +439,497 @@ TabA = table();
 TabV = table();
 
 % Export only the indicated columns
-TabA = dat.pep.A549(:,[1,2,103,35,36,105,37,38,42,43,99,100]);
+TabA = dat.pep.A549(:,[1,2,103,35,36,105,37,38,42,43,92,99,100]);
 
-TabV = dat.pep.Vero(:,[1,2,103,35,36,105,37,38,42,43,99,100]);
+TabV = dat.pep.Vero(:,[1,2,103,35,36,105,37,38,42,43,92,99,100]);
 
 TabA = [TabA , array2table(log2(dat.mat.A549))];
 TabV = [TabV , array2table(log2(dat.mat.Vero))];
 
 % Rename the TMT columns
 timepoints = {'TMT_0M','TMT_0hA','TMT_0hB','TMT_0hC','TMT_6hA','TMT_6hB','TMT_6hC','TMT_12hA','TMT_12hB','TMT_12hC','TMT_24hA','TMT_24hB','TMT_24hC','TMT_24MA','TMT_24MB','TMT_24MC'};
-TabA.Properties.VariableNames(13:28) = timepoints;
-TabV.Properties.VariableNames(13:28) = timepoints;
+TabA.Properties.VariableNames(14:29) = timepoints; %13:28
+TabV.Properties.VariableNames(14:29) = timepoints; %13:28
 
 % Write the output tables
 writetable(TabA,[path , 'Tables/A549_Nterm_Quant.csv']);
 writetable(TabV,[path , 'Tables/Vero_Nterm_Quant.csv']);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Align Vero and A549 data
+
+[c , ia, iv] = intersect(TabA.Sequence , TabV.Sequence);
+
+
+% c = common peptides
+
+% Extract 24h data
+cAmat = 2.^table2array(TabA(ia,24:29)); % 23:28
+cVmat = 2.^table2array(TabV(iv,24:29)); % 23:28
+
+
+%%
+% calculate mean 24h infected over mock
+cAmatRatio = mean(cAmat(:,1:3),2) ./ mean(cAmat(:,4:6),2);
+cVmatRatio = mean(cVmat(:,1:3),2) ./ mean(cVmat(:,4:6),2);
+
+
+% 
+% cAmat = (mean(cAmat(:,1:3),2) ./ mean(cAmat(:,4:6),2))  .* TabA.Intensity(ia);
+% cVmat = (mean(cVmat(:,1:3),2) ./ mean(cVmat(:,4:6),2))  .* TabV.Intensity(iv);
+
+cAmat = mean(cAmat(:,1:3),2) .* TabA.Intensity(ia);
+cVmat = mean(cVmat(:,1:3),2) .* TabV.Intensity(iv);
+
+% get hits in separate table and sort everything equivalently
+TabAcutdown = TabA(ia,:);
+
+[~,idx] = sort(TabAcutdown.TMT_24hA,'descend');
+TabAcutdown = TabAcutdown(idx,:);
+
+cAmat = cAmat(idx);
+cVmat = cVmat(idx);
+
+cAmatRatio = cAmatRatio(idx);
+cVmatRatio = cVmatRatio(idx);
+
+% Hits are:
+% PNN (1)
+% Viral (2-9)
+% Nup107 (10)
+% XRCC1 (15)
+hits = [1:10,15];
+
+%% Provide text annotation
+TabAcutdown.GN(2:9) = TabAcutdown.LeadingRazorProtein(2:9);
+TabAcutdown.GN(2:9) = extractAfter(TabAcutdown.GN(2:9),'|');
+TabAcutdown.GN(2:9) = extractBefore(TabAcutdown.GN(2:9),'|');
+
+%%
+figure
+subplot(1,2,1)
+scatter(log2(cAmat), log2(cVmat),'filled','k','MarkerFaceAlpha',0.3);
+hold on
+scatter(log2(cAmat(hits)), log2(cVmat(hits)),'filled','r');
+
+%title('Correlation of neo-N-termini intensity shared between the A549-Ace2 and Vero E6 datasets')
+xlabel('Log_2 24h peptide intensity in A549-Ace2')
+ylabel('Log_2 24h peptide intensity in Vero E6')
+xlim([20,40])
+ylim([20,40])
+
+line([20,40],[20,40],'Color','k','LineStyle','--');
+text(log2(cAmat(hits)), log2(cVmat(hits)),TabAcutdown.GN(hits),'FontSize',14);
+
+
+% Calculate R2
+R2 = corrcoef(log2(cAmat), log2(cVmat))
+text(22,38,['Pearsons \rho = ',num2str(R2(1,2))],'FontSize',14);
+set(gca,'FontSize',14);
+
+subplot(1,2,2)
+
+scatter(log2(cAmatRatio), log2(cVmatRatio),'filled','k','MarkerFaceAlpha',0.3);
+hold on
+scatter(log2(cAmatRatio(hits)), log2(cVmatRatio(hits)),'filled','r');
+%title('Correlation of neo-N-termini intensity shared between the A549-Ace2 and Vero E6 datasets')
+xlabel('Mean Log_2 24h Infected/24h Mock in A549-Ace2')
+ylabel('Mean Log_2 24h Infected/24h Mock in Vero E6')
+xlim([-2,7])
+ylim([-2,7])
+
+line([-2,7],[-2,7],'Color','k','LineStyle','--');
+text(log2(cAmatRatio(hits)), log2(cVmatRatio(hits)),TabAcutdown.GN(hits),'FontSize',14);
+
+% Calculate R2
+R2 = corrcoef(log2(cAmatRatio), log2(cVmatRatio))
+text(-1,6.1,['Pearsons \rho = ',num2str(R2(1,2))],'FontSize',14);
+
+set(gca,'FontSize',14);
+
+print([path , '/Figures/SFig_CorrelationScatter.pdf'],'-dpdf');
+
+%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Save all variables for analysis in separate downstream HIquant analysis
+% script.
+
+
+%% Generate files for downstream HIquant analysis of cellular proteins
+
+% Need to: 
+% Prelim: subset the sequences of interest
+HIquant = struct();
+HIquant.neoNterm.A549 = TabA(contains(TabA.Sequence,a549seqs),:);
+HIquant.neoNterm.Vero = TabV(contains(TabV.Sequence,veroseqs),:);
+
+% Note A549 includes an extra non-LxGG SRC cleavage site, possibly from
+% cellular proteases as per previous published descriptions. This is removed manually
+HIquant.neoNterm.A549(4,:) = [];
+
+
+% 1. import unenriched peptide data
+dat.Unfrpep.A549 = readtable([path , 'tA549_TotalFrac/peptides.txt']);
+dat.Unfrpep.Vero = readtable([path , 'tVero_TotalFrac/peptides.txt']);
+
+% 2. normalise as for the enriched
+
+% Reorder the corrected RI intensity channels
+dat.Unfrpep.A549(:,44:59) = dat.Unfrpep.A549(: , dat.tmt.A549(2,:) + 43);
+dat.Unfrpep.Vero(:,44:59) = dat.Unfrpep.Vero(: , dat.tmt.Vero(2,:) + 43);
+% 
+% 
+% Backup temp
+backup = dat;
+
+%% Data cleanup
+dat = backup;
+
+% Remove Reverse hits, Contaminants and low PEP identifications
+for ii = 1:numel(samples)
+    % Remove PEP <= 0.02
+    dat.Unfrpep.(samples{ii}) = dat.Unfrpep.(samples{ii})(dat.Unfrpep.(samples{ii}).PEP <= 0.02 , :);
+    % Remove Reverse hits
+    dat.Unfrpep.(samples{ii}) = dat.Unfrpep.(samples{ii})(categorical(dat.Unfrpep.(samples{ii}).Reverse) ~= '+' , :);
+    % Remove potential contaminants
+    dat.Unfrpep.(samples{ii}) = dat.Unfrpep.(samples{ii})(categorical(dat.Unfrpep.(samples{ii}).PotentialContaminant) ~= '+' , :);
+    % Filter on PIF
+
+end
+
+% Now Convert the TMT RI data to matrix form
+
+for ii = 1:numel(samples)
+   % Convert table columns to a matrix
+    dat.Umat.(samples{ii}) = table2array(dat.Unfrpep.(samples{ii})(: , [44:59]));
+   
+   % Convert 0 to NaN;
+   dat.Umat.(samples{ii})(dat.Umat.(samples{ii}) == 0) = NaN; 
+end
+
+% Remove unquantified hits, column normalise, impute and row normalise.
+for ii = 1:numel(samples)
+   % identify rows with >75% NaN
+   allNaN = sum(isnan(dat.Umat.(samples{ii})) , 2) >13;
+   dat.Umat.(samples{ii}) = dat.Umat.(samples{ii})(~allNaN , :);
+   dat.Unfrpep.(samples{ii}) = dat.Unfrpep.(samples{ii})(~allNaN , :);
+   
+   clear allNaN
+   
+   % Median normalise
+    dat.Umat.(samples{ii}) = dat.Umat.(samples{ii}) ./ nanmedian(dat.Umat.(samples{ii}));
+
+    % Knn impute missing data
+    dat.Umat.(samples{ii}) = knnimpute(dat.Umat.(samples{ii}));
+
+    % Row normalise by mean (whole dataset) 
+    dat.Umat.(samples{ii}) = dat.Umat.(samples{ii}) ./ mean(dat.Umat.(samples{ii}) , 2);
+ 
+    % Generate matrix with 24h data only
+    dat.Uh24.(samples{ii}) = dat.Umat.(samples{ii})(:,[end-5: end]);
+   
+end
+
+backup2 = dat;
+
+%%
+% 3. for those select candidates: 
+% a) Subset the data on cellular proteins:
+for ii = 1:numel(samples)
+    prots = HIquant.neoNterm.(samples{ii}).GN;
+   for jj = 1:numel(HIquant.neoNterm.(samples{ii}).GN)
+      HIquant.cell.(samples{ii}).(prots{jj,1}) = dat.Unfrpep.(samples{ii})(ismember(dat.Unfrpep.(samples{ii}).LeadingRazorProtein,HIquant.neoNterm.(samples{ii}).LeadingRazorProtein(jj)),:);
+      HIquant.cellMat.(samples{ii}).(prots{jj,1}) = dat.Umat.(samples{ii})(ismember(dat.Unfrpep.(samples{ii}).LeadingRazorProtein,HIquant.neoNterm.(samples{ii}).LeadingRazorProtein(jj)),:);  
+   end
+end
+
+% b) Loop through each protein and make sure there is no overlap with
+% peptides and cleavage site: this makes analysis simple, but potentially
+% loses some power to infer proteoforms.
+
+% So needs to either start after end position, or end before start position
+for ii = 1:numel(samples)
+    prots = HIquant.neoNterm.(samples{ii}).GN;
+    for jj = 1:numel(HIquant.neoNterm.(samples{ii}).GN)
+    
+        HIquant.cell.(samples{ii}).(prots{jj,1}) = HIquant.cell.(samples{ii}).(prots{jj,1})(HIquant.cell.(samples{ii}).(prots{jj}).StartPosition > HIquant.neoNterm.(samples{ii}).EndPosition(jj) + HIquant.cell.(samples{ii}).(prots{jj}).EndPosition < HIquant.neoNterm.(samples{ii}).StartPosition(1) == 1 , :);
+        HIquant.cellMat.(samples{ii}).(prots{jj,1}) = HIquant.cellMat.(samples{ii}).(prots{jj,1})(HIquant.cell.(samples{ii}).(prots{jj}).StartPosition > HIquant.neoNterm.(samples{ii}).EndPosition(jj) + HIquant.cell.(samples{ii}).(prots{jj}).EndPosition < HIquant.neoNterm.(samples{ii}).StartPosition(1) == 1 , :);
+
+    end
+end
+
+%% Tweak to add clustering filter: %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% c) group on a per-protein/cleavage site basis.
+
+% HIquant requires input tables, without column headers, with:
+% Col 1: colon-separated protein IDs
+% Col 2: modified/peptide sequence
+% Col 3+ level in conditions 1-n
+
+for ii = 1:numel(samples)
+       prots = HIquant.neoNterm.(samples{ii}).GN;
+       HIquant.exportFinal.(samples{ii}) = table();
+    % For each gene name in the neo-N-termini dataset (one cleavage site per GN)   
+    for jj = 1:numel(HIquant.neoNterm.(samples{ii}).GN)
+        HIquant.export.(samples{ii}).(prots{jj}).Seq = HIquant.cell.(samples{ii}).(prots{jj}).Sequence;
+        HIquant.export.(samples{ii}).(prots{jj}).Mat = HIquant.cellMat.(samples{ii}).(prots{jj}); % Note: non-Neo-N-terminal peptides not log2 yet so doing here. neo-N-termini were immediately prior to exporting tables above.
+        for kk = 1:numel(HIquant.export.(samples{ii}).(prots{jj}).Seq)
+           HIquant.export.(samples{ii}).(prots{jj}).ProteinID{kk,1} = [prots{jj},';',prots{jj},'_',num2str(HIquant.neoNterm.(samples{ii}).StartPosition(jj)),'cl'];%prots{jj}; 
+        end
+        
+            % Next section only performed if peptides from the protein
+            % exist in the unenriched dataset.
+            if isempty(HIquant.export.(samples{ii}).(prots{jj}).Mat) == 0 
+                % Need to add in the cleaved peptide
+                HIquant.export.(samples{ii}).(prots{jj}).Seq{kk + 1,1} = HIquant.neoNterm.(samples{ii}).Sequence{jj};
+                HIquant.export.(samples{ii}).(prots{jj}).Mat(kk + 1,:) = 2.^table2array(HIquant.neoNterm.(samples{ii})(jj,[13:28]));
+                HIquant.export.(samples{ii}).(prots{jj}).ProteinID{kk + 1,1} = [prots{jj},'_',num2str(HIquant.neoNterm.(samples{ii}).StartPosition(jj)),'cl'];
+
+                % Convert output to table and rearrange into HIquant input
+                % format.
+                HIquant.exportTab.(samples{ii}).(prots{jj}) = struct2table(HIquant.export.(samples{ii}).(prots{jj}));
+                HIquant.exportTab.(samples{ii}).(prots{jj}) = HIquant.exportTab.(samples{ii}).(prots{jj})(:,[3,1,2]);
+                HIquant.exportTab.(samples{ii}).(prots{jj});%
+                % Concatonate within each sample
+                %HIquant.exportFinal.(samples{ii}) = [HIquant.exportFinal.(samples{ii}); HIquant.exportTab.(samples{ii}).(prots{jj})];
+            end
+    
+    end
+    
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%% End clustering filter %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%
+% Write all these outputs to put through HIquant
+    if ~exist('/Users/ed/Documents/HiquantTest/', 'dir')
+       mkdir('/Users/ed/Documents/HiquantTest')
+    end
+
+writetable(HIquant.exportTab.A549.PAICS,'/Users/ed/Documents/HiquantTest/Input.txt','Delimiter','tab','WriteVariableNames',0);
+
+% Absolutely CRUCIAL - test HIquant from terminal first to be sure of
+% correct installation and all library requirements are in place. THEN you
+% MUST start matlab from the command line.
+tic
+runs = [];
+
+   runs = length(fieldnames(HIquant.exportTab.A549)) + length(fieldnames(HIquant.exportTab.Vero)); 
+
+kk = 1;
+for ii = 1:numel(samples)
+    fnames = fieldnames(HIquant.exportTab.(samples{ii}));
+    for jj = 1:length(fieldnames(HIquant.exportTab.(samples{ii})));
+        
+        writetable(HIquant.exportTab.(samples{ii}).(fnames{jj}),['/Users/ed/Documents/HiquantTest/',samples{ii},fnames{jj},'_Input.txt'],'Delimiter','tab','WriteVariableNames',0);
+        
+        commd = ['python3 ~/Documents/GitHub/HIquant/HIquant_run.py ''/Users/ed/Documents/HiquantTest/',samples{ii},fnames{jj},'_Input.txt'' ''/Users/ed/Documents/HiquantTest/',samples{ii},fnames{jj},'_Output_1.csv'' ''/Users/ed/Documents/HiquantTest/',samples{ii},fnames{jj},'_Output_2.csv'''];
+        %commdV = ['python3 ~/Documents/GitHub/HIquant/HIquant_run.py ''/Users/ed/Documents/HiquantTest/',samples{ii},fnames{jj},'_InputEE.txt'' ''/Users/ed/Documents/HiquantTest/',samples{ii},fnames{jj},'_Output_1EE.csv'' ''/Users/ed/Documents/HiquantTest/',samples{ii},fnames{jj},'_Output_2EE.csv'''];
+      
+        system(commd);
+
+        disp([num2str(kk),' of ',num2str(runs)])
+        kk = kk + 1;
+    end
+end
+disp('Matlab HIquant loop completed')
+toc
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Calculate CV's for cellular peptides
+
+for ii = 1:numel(samples)
+    
+    fnames = fieldnames(HIquant.exportTab.(samples{ii}));
+    
+        for jj = 1:length(fnames)
+            
+            mat = table2array(HIquant.exportTab.(samples{ii}).(fnames{jj})(:,3));
+            
+            if size(mat,1) > 2
+                HIquant.QC.(samples{ii}).Prots{jj,1} = fnames{jj};
+                HIquant.QC.(samples{ii}).(fnames{jj}).CVs =   std(mat(1:end-1,:)) ./ mean(mat(1:end-1,:));
+                %HIquant.QC.(samples{ii}).MedSD(jj,1) = median(std(mat(1:end-1,:)));
+                HIquant.QC.(samples{ii}).MedCV(jj,1) = median(std(mat(1:end-1,:)) ./ mean(mat(1:end-1,:)));
+                
+                % Identify number of clusters in the unenriched peptide
+                % data
+                eva = evalclusters(HIquant.cellMat.(samples{ii}).(fnames{jj,1}),'linkage','gap','KList',[1:6])
+                HIquant.QC.(samples{ii}).Clusters(jj,1) = eva.OptimalK;
+                clear mat
+            else
+                
+                HIquant.QC.(samples{ii}).Prots{jj,1} = fnames{jj};
+                HIquant.QC.(samples{ii}).(fnames{jj}).CVs =   NaN;
+                HIquant.QC.(samples{ii}).Clusters(jj,1) = NaN;
+                %HIquant.QC.(samples{ii}).MedSD(jj,1) = NaN;
+                HIquant.QC.(samples{ii}).MedCV(jj,1) = NaN;
+                clear mat eva
+                
+            end
+     
+        end
+    
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% Note SRC is identified in the unenriched fraction by a single peptide,
+% but is added back into the analysis as it forms a central part of the
+% story. 
+HIquant.QC.A549.Clusters(3) = 1;
+
+%% Import and display analysis
+
+% Need to:
+
+HIqImport = struct();
+
+% Loop created files into HIqImport
+for ii = 1:numel(samples)
+    fnames = fieldnames(HIquant.exportTab.(samples{ii}));
+    fnames = fnames(HIquant.QC.(samples{ii}).Clusters == 1); % Test;
+        for jj = 1:length(fnames) %(fieldnames(HIquant.exportTab.(samples{ii})))
+           % Import Inferred proteoform stochiometry
+            HIqImport.(samples{ii}).stoich.(fnames{jj}) = readtable(['/Users/ed/Documents/HiquantTest/',samples{ii},fnames{jj},'_Output_1.csv']);
+           % Remove first row
+           HIqImport.(samples{ii}).stoich.(fnames{jj})(1,:) = [];
+           % Import errors/confidence limits
+           HIqImport.(samples{ii}).errors.(fnames{jj}) = readtable(['/Users/ed/Documents/HiquantTest/',samples{ii},fnames{jj},'Output_2.csv']);
+           % Remove first row
+           HIqImport.(samples{ii}).errors.(fnames{jj})(1,:) = [];
+        end
+end
+
+% Generate tables and visualisations
+
+% First up: immediate interest is fraction at each timepoint, as well as
+% the total
+
+
+%
+% Separate the timepoints/replicates along the X axis
+x = [0,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5];
+x2 = [0,1,2,3,4,5];
+
+%HIqImport.A549.allerrors = table();
+%HIqImport.Vero.allerrors = table();
+
+%HIqImport.A549.allerrors(:,1) = HIqImport.A549.errors.NUP107.Var1;
+%HIqImport.Vero.allerrors(:,1) = HIqImport.Vero.errors.ATAD2.Var1;
+
+%%
+% Now plot
+% TODO: Add in total abundance:
+fig = figure
+t = tiledlayout(2,3)
+set(fig,'defaultAxesColorOrder',[0 0 0;0 0 1]);
+for ii = 1:numel(samples)
+   fnames = fieldnames(HIqImport.(samples{ii}).stoich);
+   %fnames = fnames(HIquant.QC.(samples{ii}).Clusters == 1); % test
+   
+
+   
+   
+   
+   for jj = 1:numel(fnames)
+       nexttile
+       % Total abundance
+       %yyaxis right
+       scatter(x,...
+           sum(table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(1:2,2:17))) ./ (mean(sum(table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(1:2,2:17))))),...
+           'filled','b','MarkerFaceAlpha',0.3)
+           
+       
+       hold on
+       % Uncleaved protein abundance
+       yyaxis left
+        scatter(x,...
+            table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(1,2:17)) ./ ...
+            sum(table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(1:2,2:17))),...
+            'filled','k','MarkerFaceAlpha',0.3)
+
+        %cleaved protein abundance
+        scatter(x,...
+            table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(2,2:17)) ./ ...
+            sum(table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(1:2,2:17))),...
+            'filled','r','MarkerFaceAlpha',0.3)
+        
+        text(-0.5,1.4,['R_2: ',num2str(HIqImport.(samples{ii}).errors.(fnames{jj}){1,2},'%.2f'),'; Overall Error: ',...
+            num2str(HIqImport.(samples{ii}).errors.(fnames{jj}){2,2}, '%.2f'),'; Ratio Error: ',...
+            num2str(HIqImport.(samples{ii}).errors.(fnames{jj}){3,2}, '%.2f')],'FontSize',11)
+  
+        
+                % Notes: for the purposes of this plotting, replicate the 0h Mock sample to
+% give 18 samples and simplify analysis. THis will not alter interpretation
+% as this sample will not show error bars as it will have SD of 0, so this
+% data should be purely used for graphing purposes.
+        
+        % uncleaved
+        aa = table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(1,2:17)) ./ ...
+            sum(table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(1:2,2:17)));
+        
+        aa = [aa(1), aa(1), aa];
+        aa = reshape(aa,3,[]);
+        aa2 = mean(aa);
+        aaErr = std(aa);
+        
+        errorbar(x2,aa2,aaErr,'k','LineStyle','none');
+        errorbar(x2(2:5),aa2(2:5),aaErr(2:5),'k');
+
+        % cleaved
+        bb = table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(2,2:17)) ./ ...
+            sum(table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(1:2,2:17)));
+        
+        bb = [bb(1), bb(1), bb];
+        bb = reshape(bb,3,[]);
+        bb2 = mean(bb);
+        bbErr = std(bb);
+        
+        errorbar(x2,bb2,bbErr,'r','LineStyle','none');
+        errorbar(x2(2:5),bb2(2:5),bbErr(2:5),'r');
+%         ylabel('Fraction of whole')
+%         ylim([-0.2 1.5])
+        
+        % total
+        %yyaxis right
+        cc = sum(table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(1:2,2:17))) ./ mean(sum(table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(1:2,2:17))));
+        
+        cc = [cc(1), cc(1), cc];
+        cc = reshape(cc,3,[]);
+        cc2 = mean(cc);
+        ccErr = std(cc);
+        errorbar(x2,cc2,ccErr,'b','LineStyle','none'); % No line wanted to connect the mocks
+        errorbar(x2(2:5),cc2(2:5),ccErr(2:5),'b');
+        
+        % Adding annotation to separate the mocks from the samples
+        line([0.5,0.5],[-0.2,1.5],'Color','k','LineStyle',':');
+        line([4.5,4.5],[-0.2,1.5],'Color','k','LineStyle',':');
+        % End annotation
+        
+        
+        title([samples{ii},' ',fnames{jj}])
+        xlabel('Time post-infection (h)')
+        ylabel('Fraction of whole, per timepoint')
+        xlim([-1 6])
+        xticks([0:1:5])
+        xticklabels({'0h Mock','0h','6h','12h','24h','24h Mock'})
+        ylim([-0.2 1.5])
+        legend({'Total','Uncleaved','Cleaved'},'Location','eastoutside')
+        yyaxis right
+                ylabel('Total abundance/mean')
+        ylim([-0.2 1.5])
+        
+        hold off
+
+        
+   end
+    
+end
+
+
+
+print([path , '/Figures/Fig_cleavagestoichiometry.pdf'],'-dpdf');
