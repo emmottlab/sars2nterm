@@ -181,6 +181,9 @@ legend([aa1,aa2],{'A549-Ace2','Vero E6'})
 legend('boxoff')
 set(gca,'Fontsize',14)
 
+writematrix([figs.nuc.A549,int.nuc.A549],'Fig2B_A549.csv')
+writematrix([figs.nuc.Vero,int.nuc.Vero],'Fig2B_Vero.csv')
+
  %%%%%%%%%%%%%%%%%%%%%%%% ORF 3a  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
   % Obtain logical vectors for 3a peptides
@@ -228,6 +231,9 @@ legend([ab1,ab2],{'A549-Ace2','Vero E6'})
 legend('boxoff')
 set(gca,'Fontsize',14)
 
+writematrix([figs.o3a.A549,int.o3a.A549],'Fig2C_A549.csv')
+writematrix([figs.o3a.Vero,int.o3a.Vero],'Fig2C_Vero.csv')
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%% Spike %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   % Obtain logical vectors for S peptides
@@ -274,6 +280,9 @@ legend([ac1,ac2],{'A549-Ace2','Vero E6'})
 legend('boxoff')
 set(gca,'Fontsize',14)
 
+
+writematrix([figs.spk.A549,int.spk.A549],'Fig2D_A549.csv')
+writematrix([figs.spk.Vero,int.spk.Vero],'Fig2D_Vero.csv')
 % Now do for remaining identified viral proteins to prepare supplemental tables 
 
 %  %%%%%%%%%%%%%%%%%%%%%%%% Membrane %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -449,6 +458,8 @@ xlim([-1,25])
 ylim([17,27])
 set(gca,'Fontsize',14)
 hold off
+
+writematrix([timecourseTimesP;dat2.spikeRfInt.A549';dat2.spikeRfInt.Vero'],'Fig2E.csv')
 
 [ax , h] = suplabel('Log2 Peptide Intensity','y')
 set(h,'FontSize',16)    

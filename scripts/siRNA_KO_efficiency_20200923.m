@@ -77,9 +77,12 @@ end
 dat.KO.mean = dat.KO.mean(reorder);
 dat.KO.mSD = dat.KO.mSD(reorder);
 dat.KO.pSD = dat.KO.pSD(reorder);
-
+%%
 figure
-bar(x , dat.KO.mean,'k','FaceAlpha',0.2)
+scatter(1:1:14 , dat.KO.mean,'filled', 'k')
+% Altered from bar to scatter formatting for compliance with journal
+% policy.
+%bar(x , dat.KO.mean,'k','FaceAlpha',0.2)
 hold on
 
 errorbar(x , dat.KO.mean , dat.KO.mSD , dat.KO.pSD ,'Color','k', 'LineStyle' , 'none','LineWidth',1);
@@ -87,8 +90,11 @@ xticklabels(siNames2)
 xtickangle(45)
 ylabel({'mRNA knockdown efficiency','Relative to untreated'})
 ylim([0 120])
+xlim([0,15])
 xlabel('siRNA')
+xticks([1:1:14])
 set(gca,'FontSize',14);
 
 print([path , '/Figures/siRNA_KO_efficiency.pdf'],'-dpdf');
 
+writematrix([dat.KO.mean';dat.KO.mSD';dat.KO.pSD'],'FigS17.csv')

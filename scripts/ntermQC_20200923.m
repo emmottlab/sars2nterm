@@ -129,6 +129,9 @@ title('A549-Ace2: N-termini')
 xlabel('N-terminus')
 ylim([6 11])
 
+writematrix(log10(dat.var.A549.Intensity(blocked.ia.A549(blocked.logMod.A549 == 0))),'SFig1F_Unblocked.csv')
+writematrix(log10(dat.var.A549.Intensity(blocked.ia.A549(blocked.logMod.A549 == 1))),'SFig1F_blocked.csv')
+
 subplot(2,3,3)
 scatter(ones(numel(dat.var.Vero.Intensity(blocked.ia.Vero(blocked.logMod.Vero == 0))),1),...
     log10(dat.var.Vero.Intensity(blocked.ia.Vero(blocked.logMod.Vero == 0))),'k','filled','MarkerFaceAlpha',0.05,'jitter','on','jitteramount',0.25)
@@ -144,6 +147,9 @@ ylabel('Log_1_0 peptide intensity')
 title('Vero E6: N-termini')
 xlabel('N-terminus')
 ylim([6 11])
+
+writematrix(log10(dat.var.Vero.Intensity(blocked.ia.Vero(blocked.logMod.Vero == 0))),'SFig1G_VUnblocked.csv')
+writematrix(log10(dat.var.Vero.Intensity(blocked.ia.Vero(blocked.logMod.Vero == 1))),'SFig1G_Vblocked.csv')
 
 % Now want distribution of N-terminal Mods.
 
@@ -256,6 +262,8 @@ title('A549-Ace2 - Enriched')
 h6 = hgA(6)
 h6.Color = 'k';
 
+writematrix([dat.pca.A549(:,1),dat.pca.A549(:,2)],'FigS1_A.csv')
+
 subplot(1,4,2) % PCA on Vero, enriched data
 pcA = 1;
 pcB = 2;
@@ -265,6 +273,8 @@ ylabel(['PC ',num2str(pcB),' (',num2str(round(dat.pcaV.Vero(pcB))),'%)']);
 title('Vero E6 - Enriched')
 h6 = hgB(6)
 h6.Color = 'k';
+
+writematrix([dat.pca.Vero(:,1),dat.pca.Vero(:,2)],'FigS1_B.csv')
 
 subplot(1,4,3) % PCA on A549, unenriched data
 pcA = 3; % Note: PCA 3 in this specific case gave better separation than PCA 1.
@@ -276,6 +286,8 @@ title('A549-Ace2 - Unenriched')
 h6 = hgC(6)
 h6.Color = 'k';
 
+writematrix([dat.upca.A549(:,3),dat.upca.A549(:,2)],'FigS1_C.csv')
+
 subplot(1,4,4) % PCA on Vero, unenriched data
 pcA = 1;
 pcB = 2;
@@ -285,6 +297,8 @@ ylabel(['PC ',num2str(pcB),' (',num2str(round(dat.upcaV.Vero(pcB))),'%)']);
 title('Vero E6 - Unenriched')
 h6 = hgD(6)
 h6.Color = 'k';
+
+writematrix([dat.upca.Vero(:,1),dat.upca.Vero(:,2)],'FigS1_D.csv')
 
 % Save figure
 print([path , '/Figures/PCA.pdf'],'-dpdf');

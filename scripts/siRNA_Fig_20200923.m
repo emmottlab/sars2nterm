@@ -57,6 +57,8 @@ ylim([0,7])
 hold off
 set(gca,'FontSize',14);
 
+writematrix(log10(rnaMat),'Fig5B.csv')
+
 % Plot Pfu Data
 subplot(2,1,2)
 boxplot(log10(pfuMat),'PlotStyle','compact','Colors','kb', 'ColorGroup',pfuSig,'Labels',grpNames);
@@ -75,6 +77,8 @@ xlabel('siRNA')
 set(gca,'FontSize',14);
 line([0 15],[log10(40),log10(40)],'Color','k','LineStyle',':')
 ylim([1,6])
+
+writematrix(log10(pfuMat),'Fig5C.csv')
 % Save figure
 print([path , '/Figures/Fig_siRNA.pdf'],'-dpdf');
 

@@ -41,6 +41,8 @@ xtickangle(45);
 hold off
 set(gca,'FontSize',14);
 
+writematrix(toxMat,'FigS16.csv')
+
 % Save plot
 print([path , '/Figures/siRNA_cytotox.pdf'],'-dpdf');
 

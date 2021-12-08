@@ -22,7 +22,7 @@ dat = struct()
 %dat.variants =
 %readtable('/Users/ed/Documents/GitHub/sars2nterm/data/covariants_20210315.csv');
 % Older list, depreciated.
-dat.variants = readtable('/Users/ed/Documents/GitHub/sars2nterm/data/covariants_20210524.csv');
+dat.variants = readtable('/Users/ed/Documents/GitHub/sars2nterm/data/covariants_20212208.csv');
 
 % Import viral cleavage data from tables S3/4.
 dat.a549 = readtable('/Users/ed/Documents/GitHub/sars2nterm/data/Tables/viralNeoN-termini_A549.csv');
@@ -207,6 +207,10 @@ text(40,0.5,['KS test: p =',num2str(p)],'FontSize',14);
 
 set(gca,'FontSize',14);
 
+writematrix([num(~logEnr)',log10(dat.totalS.distFromClosest(~logEnr))],'FigS6_ViralPep_Omicron.csv')
+writematrix([num(logEnr)',log10(dat.totalS.distFromClosest(logEnr))],'FigS6_ViralNeoNterm_Omicron.csv')
+
+
 %%
 % Subset most interesting
 temp = dat.variants.within_5_AA_A549 + dat.variants.within_5_AA_Vero >= 1;
@@ -237,5 +241,5 @@ end
 size(unique(dat.variants.ProtMut),1)
 
 %%  Write tables with the subset closest
-writetable(dat.subsvariants, '/Users/ed/Documents/GitHub/sars2nterm/data/Tables/VOC_neoNterm_within5aa.csv');
-writetable(dat.subsvariants2,'/Users/ed/Documents/GitHub/sars2nterm/data/Tables/VOC_neoNterm_within10aa.csv');
+writetable(dat.subsvariants, '/Users/ed/Documents/GitHub/sars2nterm/data/Tables/VOC_neoNterm_within5aa_omicron.csv');
+writetable(dat.subsvariants2,'/Users/ed/Documents/GitHub/sars2nterm/data/Tables/VOC_neoNterm_within10aa_omicron.csv');

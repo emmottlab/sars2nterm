@@ -186,6 +186,10 @@ legend([ab1,ab2],{'A549-Ace2','Vero E6'},'Location','west')
 legend('boxoff')
 set(gca,'Fontsize',14)
 
+writematrix([figs.mem.A549,log2(int.mem.A549)],'FigS3_memA.csv')
+writematrix([figs.mem.Vero,log2(int.mem.Vero)],'FigS3_memV.csv')
+
+
  %%%%%%%%%%%%%%%%%%%%%%%% ORF 7a iORF1  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  % Note: the plotting and analysis steps for subsequent proteins are as for M.
  % Note is 7a, but begins at Amino acid 3. (119 vs 121 AA)
@@ -233,6 +237,11 @@ ylim([min(log2([int.o7a.(samples{1}) ; int.o7a.(samples{2})]))-1,...
 title({'ORF7a iORF1 neo-N-termini','(in-frame, begins ORF7a I3)'})
 hold off
 set(gca,'Fontsize',14)
+
+
+writematrix([figs.o7a.A549,log2(int.o7a.A549)],'FigS3_o7aA.csv')
+writematrix([figs.o7a.Vero,log2(int.o7a.Vero)],'FigS3_o7aV.csv')
+
  
  %%%%%%%%%%%%%%%%%%%%%%%% ORF 8 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
@@ -278,7 +287,12 @@ title({'ORF8 neo-N-termini'})
 hold off
 
 set(gca,'Fontsize',14)
- 
+
+
+writematrix([figs.o8.A549,log2(int.o8.A549)],'FigS3_o8A.csv')
+writematrix([figs.o8.Vero,log2(int.o8.Vero)],'FigS3_o8V.csv')
+
+
 %%%%%%%%%%%%%%%%%%%%%%%% ORF 9B %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Obtain logical vectors for ORF9B peptides
@@ -322,6 +336,11 @@ title({'ORF9B N-terminus'})
 hold off
 
 set(gca,'Fontsize',14)
+
+
+writematrix([figs.o9b.A549,log2(int.o9b.A549)],'FigS3_o9bA.csv')
+writematrix([figs.o9b.Vero,log2(int.o9b.Vero)],'FigS3_o9bV.csv')
+
 
  %%%%%%%%%%%%%%%%%%%%%%%% pp1ab %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Obtain logical vectors for ORF9B peptides
@@ -367,6 +386,9 @@ hold off
 
 ylabel(t,'Log_2 Peptide Intensity','FontSize',14)
 set(gca,'Fontsize',14)
+
+writematrix([figs.pp.A549,log2(int.pp.A549)],'FigS3_ppA.csv')
+writematrix([figs.pp.Vero,log2(int.pp.Vero)],'FigS3_ppV.csv')
 
 % Save results
 print([path , '/Figures/SFig_SupViralNtermini.pdf'],'-dpdf');

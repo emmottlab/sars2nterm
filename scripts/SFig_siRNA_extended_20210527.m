@@ -7,7 +7,7 @@ path = '/Users/ed/Documents/GitHub/sars2nterm/data/';
 
 
 % Import the normalised (to scrambled control) cell viability data
-uDat = readtable([path , 'BjornData/cellCounts_Uninfected.csv']);
+uDat = readtable([path , 'BjornData/cellCounts_Uninfected.csv']); 
 iDat = readtable([path , 'BjornData/cellCounts_Infected.csv']);
 
 uMat = readmatrix([path , 'BjornData/cellCounts_Uninfected.csv']);
@@ -165,11 +165,13 @@ x = repmat(1:5,6,1);
 scatter(x(:),log10(RNAmat(:)),'filled','k','MarkerFaceAlpha',0.3','jitter','on','jitterAmount',0.15);
 ylabel({'Log_1_0 RNA copies';'PFU equivalent/mL'})
 
-text(4,7,'p \leq 0.01 vs. Ctrl','Color','b','FontSize',14);
+text(4,7,'p < 0.01 vs. Ctrl','Color','b','FontSize',14);
 text(4,6,'p > 0.01 vs. Ctrl','Color','r','FontSize',14);
 
 hold off
 set(gca,'FontSize',14);
+
+writematrix(log10(RNAmat),'FigS18_A.csv')
 
 % PFU
 subplot(3,3,2)
@@ -180,25 +182,32 @@ scatter(x(:),log10(PFUmat(:)),'filled','k','MarkerFaceAlpha',0.3','jitter','on',
 ylabel({'Log_1_0 PFU/mL'})
 % Add LOD
 line([0 6.5],[log10(40),log10(40)],'Color','k','LineStyle',':')
-text(4,7,'p \leq 0.01 vs. Ctrl','Color','b','FontSize',14);
+text(4,7,'p < 0.01 vs. Ctrl','Color','b','FontSize',14);
 text(4,6,'p > 0.01 vs. Ctrl','Color','r','FontSize',14);
 hold off
 set(gca,'FontSize',14);
 
-
-% KO efficiency
+writematrix(log10(PFUmat),'FigS18_B.csv')
+% Replot panel C as a scatter plot with error bars.
+% KO efficiency 
 subplot(3,3,3)
 x = 1:numel(siNames);
-bar(x , dat.KO.mean,'k','FaceAlpha',0.2)
+scatter(x, dat.KO.mean,'filled','k')
+%bar(x , dat.KO.mean,'k','FaceAlpha',0.2)
 hold on
 
 errorbar(x , dat.KO.mean , dat.KO.mSD , dat.KO.pSD ,'Color','k', 'LineStyle' , 'none','LineWidth',1);
 xticklabels(siNames2)
+xticks([1:1:4])
+xlim([0,5])
 xtickangle(90)
 ylabel({'mRNA knockdown efficiency','Relative to untreated'})
 ylim([0 120])
 %xlabel('siRNA')
 set(gca,'FontSize',14);
+
+writematrix([dat.KO.mean';dat.KO.mSD';dat.KO.pSD'],'FigS18_C.csv')
+%
 
 % Now viability
 subplot(3,3,4:6)
@@ -209,11 +218,13 @@ x = repmat(1:17,6,1);
 scatter(x(:),uMat(:),'filled','k','MarkerFaceAlpha',0.3','jitter','on','jitterAmount',0.15);
 ylim([0,250])
 
-text(16,225,'p \leq 0.05 vs. Ctrl','Color','b','FontSize',14);
+text(16,225,'p < 0.05 vs. Ctrl','Color','b','FontSize',14);
 text(16,200,'p > 0.05 vs. Ctrl','Color','r','FontSize',14);
 ylabel({'Relative cell count vs. Ctrl';'Uninfected'})
 hold off
 set(gca,'FontSize',14);
+
+writematrix(uMat,'FigS18_D.csv')
 
 subplot(3,3,7:9)
 boxplot(iMat,'PlotStyle','compact','Colors','krb', 'ColorGroup',iSig,'Labels',grpNames,'Symbol','')
@@ -223,11 +234,13 @@ scatter(x(:),iMat(:),'filled','k','MarkerFaceAlpha',0.3','jitter','on','jitterAm
 ylim([0, 400])
 xlabel('siRNA')
 
-text(16,370,'p \leq 0.05 vs. Ctrl','Color','b','FontSize',14);
+text(16,370,'p < 0.05 vs. Ctrl','Color','b','FontSize',14);
 text(16,330,'p > 0.05 vs. Ctrl','Color','r','FontSize',14);
 ylabel({'Relative cell count vs. Ctrl';'Infected'})
 hold off
 set(gca,'FontSize',14);
+
+writematrix(iMat,'FigS18_E.csv')
 
 %% Supplemental analysis - IRF3
 ctrl = PFUmat(:,1) ./ mean(PFUmat(:,1),'omitnan')

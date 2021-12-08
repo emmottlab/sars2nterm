@@ -120,6 +120,10 @@ title('Vero E6: N-termini')
 xlabel('N-terminus')
 ylim([6 11])
 
+writematrix(log10(dat.var.Vero.Intensity(blocked.ia.Vero(blocked.logMod.Vero == 0))),'Fig_S5d_unblocked.csv')
+writematrix(log10(dat.var.Vero.Intensity(blocked.ia.Vero(blocked.logMod.Vero == 1))),'Fig_S5d_blocked.csv')
+
+
 % Now want distribution of N-terminal Mods.
 
 % So N-terminal mods will all begin: '_(A , _(G or _(T for N-terminal Ac,
@@ -221,6 +225,9 @@ xlabel(['PC ',num2str(pcA),' (',num2str(round(dat.pcaV.Vero(pcA))),'%)']);
 ylabel(['PC ',num2str(pcB),' (',num2str(round(dat.pcaV.Vero(pcB))),'%)']);
 title('Vero E6 - Enriched')
 
+writematrix([dat.pca.Vero(:,1) , dat.pca.Vero(:,2)],'Fig_S5a.csv')
+
+
 subplot(1,2,2) % PCA on Vero, unenriched data
 pcA = 1;
 pcB = 2;
@@ -228,5 +235,8 @@ hgD = gscatter(dat.upca.Vero(:,pcA) , dat.upca.Vero(:,pcB) , grpVar);
 xlabel(['PC ',num2str(pcA),' (',num2str(round(dat.upcaV.Vero(pcA))),'%)']);
 ylabel(['PC ',num2str(pcB),' (',num2str(round(dat.upcaV.Vero(pcB))),'%)']);
 title('Vero E6 - Unenriched')
+
+writematrix([dat.upca.Vero(:,1) , dat.upca.Vero(:,2)],'Fig_S5b.csv')
+
 
 print([path , '/Figures/PI_PCA.pdf'],'-dpdf');

@@ -86,6 +86,8 @@ title('Infectivity in HEK-Ace2 cells')
 xtickangle(45)
 breakyaxis([11,30],0.005)
 
+writematrix(dat.Md3c,'Fig3C.csv')
+
 subplot(2,2,2)
 boxplot(dat.Md3d,'PlotStyle','compact','Labels',labs1,'Colors','krb','ColorGroup',p2Grp,'Symbol','');
 hold on
@@ -104,6 +106,8 @@ breakyaxis([11,30],0.005)
 labs2 = dat.d3f.Var1(1:6);
 labs2{6,1} = 'V635G/C671G';
 
+writematrix(dat.Md3d,'Fig3D.csv')
+
 subplot(2,2,4)
 boxplot(dat.Md3f,'PlotStyle','compact','Labels',labs2,'Colors','krb','ColorGroup',p3Grp,'Symbol','');
 hold on
@@ -118,3 +122,4 @@ ylabel('S1/S0 ratio')
 title({'Ratio of cleaved (S1) to ';'uncleaved (S0) SARS-CoV-2 spike'})
 xtickangle(45)
 
+writematrix(dat.Md3f,'Fig3F.csv')

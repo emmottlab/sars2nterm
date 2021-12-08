@@ -181,6 +181,9 @@ hold on
  ylim([-yl yl])
  hold off
  
+ writematrix(log2(B),'FigS13_Aall.csv')
+ writematrix([test',log2(B(dat.vpv.nsp5.A549(I)))],'FigS13_Asig.csv')
+ 
  % A549 nsp3
  dat.vmat.A549 = [dat.h24.A549(:,1);dat.h24.A549(:,2);dat.h24.A549(:,3)];
 [B, I] = sort(dat.vmat.A549, 'descend');
@@ -205,6 +208,9 @@ scatter(test,log2(B(dat.vpv.nsp3.A549(I))),'filled','MarkerFaceAlpha',0.5); % Ad
  ylim([-yl yl])
  hold off
  
+  writematrix(log2(B),'FigS13_Ball.csv')
+ writematrix([test',log2(B(dat.vpv.nsp3.A549(I)))],'FigS13_Bsig.csv')
+ %
  dat.vmat.Vero = [dat.h24.Vero(:,1);dat.h24.Vero(:,2);dat.h24.Vero(:,3)];
 [B, I] = sort(dat.vmat.Vero, 'descend');
  
@@ -228,6 +234,9 @@ hold on
  ylim([-yl yl])
  hold off
   
+   writematrix(log2(B),'FigS13_Call.csv')
+ writematrix([test',log2(B(dat.vpv.nsp5.Vero(I)))],'FigS13_Csig.csv')
+ 
  % Vero nsp3
  dat.vmat.Vero = [dat.h24.Vero(:,1);dat.h24.Vero(:,2);dat.h24.Vero(:,3)];
 [B, I] = sort(dat.vmat.Vero, 'descend');
@@ -254,6 +263,9 @@ hold on
 
  xlabel(t,'Neo-N-terminal peptides');
  ylabel(t,'Log_2 24h Infected / Mock')
+ 
+   writematrix(log2(B),'FigS13_Dall.csv')
+ writematrix([test',log2(B(dat.vpv.nsp3.Vero(I)))],'FigS13_Dsig.csv')
  
  print([path , '/Figures/KStest_ConsensusNterm.pdf'],'-dpdf');
  
@@ -527,6 +539,8 @@ R2 = corrcoef(log2(cAmat), log2(cVmat))
 text(22,38,['Pearsons \rho = ',num2str(R2(1,2))],'FontSize',14);
 set(gca,'FontSize',14);
 
+writematrix([log2(cAmat), log2(cVmat)],'FigS2_A.csv')
+
 subplot(1,2,2)
 
 scatter(log2(cAmatRatio), log2(cVmatRatio),'filled','k','MarkerFaceAlpha',0.3);
@@ -546,6 +560,9 @@ R2 = corrcoef(log2(cAmatRatio), log2(cVmatRatio))
 text(-1,6.1,['Pearsons \rho = ',num2str(R2(1,2))],'FontSize',14);
 
 set(gca,'FontSize',14);
+
+
+writematrix([log2(cAmatRatio), log2(cVmatRatio)],'FigS2_B.csv')
 
 print([path , '/Figures/SFig_CorrelationScatter.pdf'],'-dpdf');
 
@@ -843,6 +860,7 @@ for ii = 1:numel(samples)
            sum(table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(1:2,2:17))) ./ (mean(sum(table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(1:2,2:17))))),...
            'filled','b','MarkerFaceAlpha',0.3)
            
+       writematrix(sum(table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(1:2,2:17))) ./ (mean(sum(table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(1:2,2:17))))),['FigS14_total',fnames{jj},'.csv'])
        
        hold on
        % Uncleaved protein abundance
@@ -852,11 +870,17 @@ for ii = 1:numel(samples)
             sum(table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(1:2,2:17))),...
             'filled','k','MarkerFaceAlpha',0.3)
 
+        writematrix(table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(1,2:17)) ./ ...
+            sum(table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(1:2,2:17))),['FigS14_uncleaved',fnames{jj},'.csv'])
+        
         %cleaved protein abundance
         scatter(x,...
             table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(2,2:17)) ./ ...
             sum(table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(1:2,2:17))),...
             'filled','r','MarkerFaceAlpha',0.3)
+        
+        writematrix( table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(2,2:17)) ./ ...
+            sum(table2array(HIqImport.(samples{ii}).stoich.(fnames{jj})(1:2,2:17))),['FigS14_cleaved',fnames{jj},'.csv'])
         
         text(-0.5,1.4,['R_2: ',num2str(HIqImport.(samples{ii}).errors.(fnames{jj}){1,2},'%.2f'),'; Overall Error: ',...
             num2str(HIqImport.(samples{ii}).errors.(fnames{jj}){2,2}, '%.2f'),'; Ratio Error: ',...

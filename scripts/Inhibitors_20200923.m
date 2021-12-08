@@ -75,7 +75,7 @@ ic50 = coeffs(3); % 95% limits in ci(3)
     % Plot individual datapoints
   
     scatter([iDat.Bafe(:,1); iDat.Bafe(:,1); iDat.Bafe(:,1)],...
-        [log10(iDat.(samples{ii})(:,2));log10(iDat.(samples{ii})(:,3));log10(iDat.(samples{ii})(:,2))]...
+        [log10(iDat.(samples{ii})(:,2));log10(iDat.(samples{ii})(:,3));log10(iDat.(samples{ii})(:,4))]...
     ,'filled','r','MarkerFaceAlpha',0.3','jitter','on','jitterAmount',0.01);
 
 % Set axis limitd
@@ -93,6 +93,9 @@ ic50 = coeffs(3); % 95% limits in ci(3)
 
     clear minResponse midResponse maxResponse minDose maxDose
     line([0.03 11],[log10(80),log10(80)],'Color','k','LineStyle',':')
+    
+    writematrix([iDat.Bafe(:,1), log10(iDat.(samples{ii})(:,2:4))],['Fig6_',samples{ii},'.csv'])
+    
 set(gca,'FontSize',14)    
 end
 
@@ -159,6 +162,8 @@ nexttile
     clear minResponse midResponse maxResponse minDose maxDose
     line([0.03 11],[log10(80),log10(80)],'Color','k','LineStyle',':')
 set(gca,'FontSize',14)    
+
+writematrix([iDat.Bafe(:,1), log10(iDat.(samples{ii})(:,2:4))],['FigS19_',samples{ii},'.csv'])
 end
 
 xlabel(t,'Log_1_0 \muM','FontSize',18)
@@ -229,6 +234,8 @@ XX = CC( 1:find( CC < 50, 1 ) ); % XX = all values upto first <50 value (so can 
     title(sampleNames{ii})
     xticks([0.01, 0.1 , 1 , 10])
 set(gca,'FontSize',14)   
+
+writematrix([iDat.Bafe(:,1), iDat.(samples{ii})(:,8:10)],['FigS19_cytox_',samples{ii},'.csv'])
 end
 
 xlabel(t,'Log_1_0 \muM','FontSize',18)

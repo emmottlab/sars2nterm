@@ -263,6 +263,9 @@ title('neo-N-termini: A549-Ace2')
 set(gca,'Fontsize',14)
 hold off
 xlim([-3,6])
+
+writematrix([dat.mean.A549,dat.q2.A549],'Fig1E.csv');
+
 subplot(2,6,1:2) % Row 1: 1 (2,4,5)
 % Uncomment section to see individual datapoints
 % for ii = 1:3
@@ -279,6 +282,8 @@ subplot(2,6,1:2) % Row 1: 1 (2,4,5)
 errorbar(timecourseTimes, mean(tc_r_A),std(tc_r_A),'-ok','LineWidth',1,'MarkerFaceColor','k');
 hold on
 errorbar(timecourseTimes, mean(tc_r_V),std(tc_r_V),'-or','LineWidth',1,'MarkerFaceColor','r');
+
+writematrix([tc_r_A;tc_r_V],'Fig1B.csv')
 
 title('Viral RNA levels')
 xlabel('Hours post-infection')
@@ -300,6 +305,8 @@ errorbar(timecourseTimesP, mean(datP.Rs.Vero,2),std(datP.Rs.Vero'),'-or','LineWi
 
 errorbar(timecourseTimesP, mean(datP.Rnsp8.A549,2),std(datP.Rnsp8.A549'),'--sk','LineWidth',1,'MarkerFaceColor','k');
 errorbar(timecourseTimesP, mean(datP.Rnsp8.Vero,2),std(datP.Rnsp8.Vero'),'--sr','LineWidth',1,'MarkerFaceColor','r');
+
+writematrix([datP.Rs.A549';datP.Rs.Vero';datP.Rnsp8.A549';datP.Rnsp8.Vero'],'Fig1C.csv')
 
 title('Viral Protein levels')
 xlabel('Hours post-infection')
@@ -329,6 +336,8 @@ subplot(2,6,5:6) % Row 1: 3 (2,4,7)
 errorbar(timecourseTimes, mean(tc_p_A),std(tc_p_A),'-ok','LineWidth',1,'MarkerFaceColor','k');
 hold on
 errorbar(timecourseTimes, mean(tc_p_V),std(tc_p_V),'-or','LineWidth',1,'MarkerFaceColor','r');
+
+writematrix([tc_p_A;tc_p_V],'Fig1D.csv')
 
 title('Viral Titres')
 xlabel('Hours post-infection')
@@ -366,6 +375,9 @@ legend('boxoff')
 title('neo-N-termini: Vero E6')
 xlim([-3,6])
 hold off
+
+
+writematrix([dat.mean.Vero,dat.q2.Vero],'Fig1F.csv');
 
 
 % Save figure
